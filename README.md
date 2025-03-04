@@ -24,12 +24,13 @@ $ npm run start:prod
 ## API description
 
 Endpoints
-Method Endpoint -------Description
-GET ---/locations -----Get all locations
-GET ---/locations/:id -Get a specific location
-POST --/locations -----Create a new location
-PUT ---/locations/:id -Update a location
-DELETE /locations/:id -Delete a location
+
+- Method Endpoint -------Description
+- GET ---/locations -----Get all locations
+- GET ---/locations/:id -Get a specific location
+- POST --/locations -----Create a new location
+- PUT ---/locations/:id -Update a location
+- DELETE /locations/:id -Delete a location
 
 ## Technology:
 
@@ -42,3 +43,8 @@ DELETE /locations/:id -Delete a location
 ## Run on local
 
 Visit API at http://localhost:4000/docs
+
+## API deployed
+
+- Please visit https://location-api-30ax.onrender.com/docs#
+- Note: API maybe take 1 or 2 minutes to wakeup
