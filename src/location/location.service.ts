@@ -12,8 +12,18 @@ export class LocationService {
     private readonly locationRepository: Repository<Location>,
   ) {}
 
-  create(createLocationDto: CreateLocationDto) {
+  async create(createLocationDto: CreateLocationDto) {
     const location = this.locationRepository.create(createLocationDto);
+    const parentId = createLocationDto.parentId;
+    if (parentId) {
+      const parentLocation = await this.locationRepository.findOne({
+        where: { id: parentId },
+      });
+      if (!parentLocation) {
+        throw new NotFoundException('Parent location not found');
+      }
+      location.parent = parentLocation;
+    }
     return this.locationRepository.save(location);
   }
 
