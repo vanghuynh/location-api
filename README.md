@@ -38,3 +38,7 @@ DELETE /locations/:id -Delete a location
 - Validation: DTOs with class-validator.
 - Logging: Custom middleware.
 - Error Handling: Global exception filter.
+
+## Run on local
+
+Visit API at http://localhost:4000/docs
