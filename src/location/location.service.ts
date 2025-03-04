@@ -42,5 +42,6 @@ export class LocationService {
     if (result.affected === 0) {
       throw new NotFoundException('Location not found');
     }
+    return result;
   }
 }
