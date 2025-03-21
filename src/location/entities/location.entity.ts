@@ -24,7 +24,7 @@ export class Location {
     nullable: true,
     onDelete: 'CASCADE',
   })
-  parent: Location; // Reference to parent location (e.g., "A Level 1" is the parent of "A Lobby Level1")
+  parent?: Location; // Reference to parent location (e.g., "A Level 1" is the parent of "A Lobby Level1")
 
   @OneToMany(() => Location, (location) => location.parent)
   children: Location[];

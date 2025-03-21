@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -43,8 +47,61 @@ export class LocationService {
   }
 
   async update(id: number, updateLocationDto: UpdateLocationDto) {
-    await this.locationRepository.update(id, updateLocationDto);
-    return this.findOne(id);
+    const { parentId } = updateLocationDto;
+
+    // Fetch the node being updated
+    const node = await this.findOne(id);
+    if (!node) {
+      throw new NotFoundException('Location not found');
+    }
+
+    if (parentId) {
+      // Check if the new parent is a descendant of the node
+      const isRecursive = await this.isDescendant(id, parentId);
+      if (isRecursive) {
+        throw new BadRequestException(
+          'Cannot set a child node as the parent of its ancestor',
+        );
+      }
+
+      // Fetch the new parent node to ensure it exists
+      const parentNode = await this.locationRepository.findOne({
+        where: { id: parentId },
+      });
+      if (!parentNode) {
+        throw new NotFoundException('Parent location not found');
+      }
+
+      // Update the parent relationship
+      node.parent = parentNode;
+    } else {
+      // If no parentId is provided, set the parent to null
+      node.parent = undefined;
+    }
+
+    // Save the updated node
+    return this.locationRepository.save(node);
+  }
+
+  // Helper method to check if a node is a descendant of another node
+  private async isDescendant(
+    nodeId: number,
+    parentId: number,
+  ): Promise<boolean> {
+    if (nodeId === parentId) {
+      return true;
+    }
+
+    const parent = await this.locationRepository.findOne({
+      where: { id: parentId },
+      relations: ['parent'],
+    });
+
+    if (!parent || !parent.parent) {
+      return false;
+    }
+
+    return this.isDescendant(nodeId, parent.parent.id);
   }
 
   async remove(id: number) {
